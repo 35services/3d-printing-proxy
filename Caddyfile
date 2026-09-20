@@ -1,0 +1,18 @@
+:80 {
+	redir /octoprint-mk3 /octoprint-mk3/
+	handle_path /octoprint-mk3/* {
+		reverse_proxy localhost:91 {
+			header_up X-Script-Name /octoprint-mk3
+		}
+	}
+
+	redir /filaments /filaments/
+	handle_path /filaments/* {
+		reverse_proxy localhost:81
+	}
+
+	handle {
+		root * /srv
+		file_server
+	}
+}

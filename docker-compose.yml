@@ -1,0 +1,9 @@
+services:
+  proxy:
+    image: caddy:latest
+    container_name: proxy
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./site:/srv:ro

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drucken bei 35services</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Drucken bei 35services</h1>
+    <p>tools:</p>
+  </header>
+  <main class="grid">
+    <a class="card" href="/octoprint-mk3/">
+      <span class="icon">
+        <svg viewBox="0 0 24 24"><path d="M6 3h12v5H6z"/><path d="M4 8h16v3H4z"/><path d="M12 11v4"/><path d="M4 21h16"/><path d="M8 18h8v3H8z"/></svg>
+      </span>
+      <h2>OctoPrint MK3</h2>
+      <p></p>
+      <span class="go">Öffnen &rarr;</span>
+    </a>
+    <a class="card" href="/filaments/">
+      <span class="icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6" opacity=".45"/></svg>
+      </span>
+      <h2>Filamente</h2>
+      <p>Hier speichern wir die geladenen Filamente.</p>
+      <span class="go">Öffnen &rarr;</span>
+    </a>
+    <a class="preview" id="preview" href="/octoprint-mk3/" aria-label="OctoPrint MK3 öffnen">
+      <img id="cam" alt="MK3 Webcam">
+      <span class="label">MK3 live</span>
+      <span class="offline">Webcam offline</span>
+    </a>
+  </main>
+  <aside class="note">
+    <strong>OctoApp?</strong> Den Proxy nicht verwenden: Für den MK3S direkt Port <code>91</code> als Basis-URL eintragen (<code>http://&lt;diese-adresse&gt;:91</code>). Der Pfad <code>/octoprint-mk3/</code> ist nur für den Browser gedacht.
+  </aside>
+  <script>
+    // Only hold the MJPEG stream open while the tab is visible.
+    var box = document.getElementById('preview'), cam = document.getElementById('cam');
+    var url = '/octoprint-mk3/webcam/?action=stream';
+    function start() { box.classList.remove('failed'); cam.src = url + '&t=' + Date.now(); }
+    function stop() { cam.removeAttribute('src'); }
+    cam.addEventListener('error', function () { box.classList.add('failed'); });
+    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+    start();
+  </script>
+</body>
+</html>
