@@ -18,8 +18,12 @@
 	}
 }
 
-# Plain HTTP for the LAN (by IP / short name).
+# Plain HTTP for the LAN (by IP / short name). The Tailscale name is sent to
+# HTTPS; Vaultwarden is never served over plain HTTP.
 :80 {
+	@ts host {$TS_DOMAIN}
+	redir @ts https://{host}{uri} 307
+
 	import services
 }
 
@@ -27,10 +31,12 @@
 # the local tailscaled (socket mounted in docker-compose.yml), no ACME setup.
 # TS_DOMAIN comes from .env, e.g. host.tailnet-name.ts.net
 {$TS_DOMAIN} {
-	import services
-}
+	# Vaultwarden runs under this sub-path (DOMAIN in its .env includes it),
+	# so the prefix is passed through, not stripped.
+	redir /vaultwarden /vaultwarden/
+	handle /vaultwarden/* {
+		reverse_proxy localhost:8080
+	}
 
-# Vaultwarden (password manager) on its own port, it does not like subpaths.
-{$TS_DOMAIN}:8443 {
-	reverse_proxy localhost:8080
+	import services
 }

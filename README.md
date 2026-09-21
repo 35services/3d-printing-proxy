@@ -8,9 +8,9 @@ We have a raspberry pi and run a bunch of services
 
 | Where | What |
 |---|---|
-| `:80` (HTTP, LAN) | landing page, `/octoprint-mk3/` (-> `:91`), `/filaments/` (-> `:81`) |
+| `:80` (HTTP, LAN) | landing page, `/octoprint-mk3/` (-> `:91`), `/filaments/` (-> `:81`). Requests for the Tailscale name are redirected to HTTPS |
 | `https://<TS_DOMAIN>/` | same routes as above, over HTTPS |
-| `https://<TS_DOMAIN>:8443/` | Vaultwarden password manager (-> `127.0.0.1:8080`, see the `bitwarden` project) |
+| `https://<TS_DOMAIN>/vaultwarden/` | Vaultwarden password manager (-> `127.0.0.1:8080`, HTTPS only, see the `bitwarden` project) |
 
 ## HTTPS via Tailscale
 
