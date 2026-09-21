@@ -20,6 +20,24 @@
       <p></p>
       <span class="go">Öffnen &rarr;</span>
     </a>
+    <a class="card" href="/octoprint-mk4/">
+      <span class="icon">
+        <svg viewBox="0 0 24 24"><path d="M6 3h12v5H6z"/><path d="M4 8h16v3H4z"/><path d="M12 11v4"/><path d="M4 21h16"/><path d="M8 18h8v3H8z"/></svg>
+      </span>
+      <h2>OctoPrint MK4</h2>
+      <p></p>
+      <span class="go">Öffnen &rarr;</span>
+    </a>
+    <a class="preview" href="/octoprint-mk3/" data-stream="/octoprint-mk3/webcam/?action=stream" aria-label="OctoPrint MK3 öffnen">
+      <img alt="MK3 Webcam">
+      <span class="label">MK3 live</span>
+      <span class="offline">Webcam offline</span>
+    </a>
+    <a class="preview" href="/octoprint-mk4/" data-stream="/octoprint-mk4/webcam/?action=stream" aria-label="OctoPrint MK4 öffnen">
+      <img alt="MK4 Webcam">
+      <span class="label">MK4 live</span>
+      <span class="offline">Webcam offline</span>
+    </a>
     <a class="card" href="/filaments/">
       <span class="icon">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6" opacity=".45"/></svg>
@@ -28,14 +46,9 @@
       <p>Hier speichern wir die geladenen Filamente.</p>
       <span class="go">Öffnen &rarr;</span>
     </a>
-    <a class="preview" id="preview" href="/octoprint-mk3/" aria-label="OctoPrint MK3 öffnen">
-      <img id="cam" alt="MK3 Webcam">
-      <span class="label">MK3 live</span>
-      <span class="offline">Webcam offline</span>
-    </a>
   </main>
   <aside class="note">
-    <strong>OctoApp?</strong> Den Proxy verwenden: Für den MK3S direkt  als Basis-URL eintragen (<code>http://&lt;diese-adresse&gt;/octoprint-mk3</code>). Die Server laufen unter Ports <code>:91</code> und <code>:92</code> das scheint aber alles direkt über die proxy URL zu funktionieren.
+    <strong>OctoApp?</strong> Den Proxy verwenden: Für den MK3S direkt  als Basis-URL eintragen (<code>http://&lt;diese-adresse&gt;/octoprint-mk3</code>), für den MK4 <code>http://&lt;diese-adresse&gt;/octoprint-mk4</code>. Der Server läuft unter <code>:91</code> das scheint aber alles direkt über die proxy URL zu funktionieren.
   </aside>
   <aside class="note">
     <strong>Quellcode:</strong> Die Repos hinter diesem Setup.
@@ -46,14 +59,20 @@
     </ul>
   </aside>
   <script>
-    // Only hold the MJPEG stream open while the tab is visible.
-    var box = document.getElementById('preview'), cam = document.getElementById('cam');
-    var url = '/octoprint-mk3/webcam/?action=stream';
-    function start() { box.classList.remove('failed'); cam.src = url + '&t=' + Date.now(); }
-    function stop() { cam.removeAttribute('src'); }
-    cam.addEventListener('error', function () { box.classList.add('failed'); });
-    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
-    start();
+    // Only hold the MJPEG streams open while the tab is visible.
+    var previews = Array.prototype.slice.call(document.querySelectorAll('.preview'));
+    function start(box) {
+      box.classList.remove('failed');
+      box.querySelector('img').src = box.dataset.stream + '&t=' + Date.now();
+    }
+    function stop(box) { box.querySelector('img').removeAttribute('src'); }
+    previews.forEach(function (box) {
+      box.querySelector('img').addEventListener('error', function () { box.classList.add('failed'); });
+    });
+    document.addEventListener('visibilitychange', function () {
+      previews.forEach(document.hidden ? stop : start);
+    });
+    previews.forEach(start);
   </script>
 </body>
 </html>

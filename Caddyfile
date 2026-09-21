@@ -7,6 +7,14 @@
 		}
 	}
 
+	redir /octoprint-mk4 /octoprint-mk4/
+	handle_path /octoprint-mk4/* {
+		reverse_proxy localhost:92 {
+			header_up X-Script-Name /octoprint-mk4
+			header_up X-Scheme {scheme}
+		}
+	}
+
 	redir /filaments /filaments/
 	handle_path /filaments/* {
 		reverse_proxy localhost:81

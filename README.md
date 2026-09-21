@@ -8,7 +8,7 @@ We have a raspberry pi and run a bunch of services
 
 | Where | What |
 |---|---|
-| `:80` (HTTP, LAN) | landing page, `/octoprint-mk3/` (-> `:91`), `/filaments/` (-> `:81`). Requests for the Tailscale name are redirected to HTTPS |
+| `:80` (HTTP, LAN) | landing page, `/octoprint-mk3/` (-> `:91`), `/octoprint-mk4/` (-> `:92`), `/filaments/` (-> `:81`). Requests for the Tailscale name are redirected to HTTPS |
 | `https://<TS_DOMAIN>/` | same routes as above, over HTTPS |
 | `https://<TS_DOMAIN>/vaultwarden/` | Vaultwarden password manager (-> `127.0.0.1:8080`, HTTPS only, see the `bitwarden` project) |
 
@@ -24,4 +24,4 @@ Requirements:
 
 Apply changes with `docker compose up -d` (a Caddyfile-only change can use `docker exec proxy caddy reload --config /etc/caddy/Caddyfile`). The first HTTPS request after a restart can be slow while the certificate is fetched.
 
-Note: the services' own ports (`:91`, `:81`, Portainer `:9443`) still answer directly over plain HTTP on the network. HTTPS through the proxy does not close them.
+Note: the services' own ports (`:91`, `:92`, `:81`, Portainer `:9443`) still answer directly over plain HTTP on the network. HTTPS through the proxy does not close them.
