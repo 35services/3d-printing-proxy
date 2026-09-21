@@ -4,6 +4,10 @@ services:
     container_name: proxy
     restart: unless-stopped
     network_mode: host
+    environment:
+      TS_DOMAIN: ${TS_DOMAIN:?set TS_DOMAIN in .env (see .env.example)}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./site:/srv:ro
+      # Lets Caddy get Tailscale HTTPS certificates for the *.ts.net name.
+      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
