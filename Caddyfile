@@ -20,6 +20,12 @@
 		reverse_proxy localhost:81
 	}
 
+	redir /sensor-visualizer /sensor-visualizer/visualizer.html
+	redir /sensor-visualizer/ /sensor-visualizer/visualizer.html
+	handle_path /sensor-visualizer/* {
+		reverse_proxy localhost:8000
+	}
+
 	handle {
 		root * /srv
 		file_server
