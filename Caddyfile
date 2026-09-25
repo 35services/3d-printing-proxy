@@ -1,3 +1,32 @@
+# One Tasmota plug at 192.168.178.<args[0]>. Every request is rewritten to a
+# fixed command, so nothing else (config, reset, ...) can reach the plug:
+#   GET  /power/<n>       energy status (Status 8)
+#   GET  /power/<n>/state relay state (Power)
+#   POST /power/<n>/on    switch on  (POST only, so no link preview or
+#   POST /power/<n>/off   switch off  crawler can switch a device)
+(tasmota) {
+	handle /power/{args[0]} {
+		rewrite * /cm?cmnd=Status%208
+		reverse_proxy 192.168.178.{args[0]}
+	}
+	handle /power/{args[0]}/state {
+		rewrite * /cm?cmnd=Power
+		reverse_proxy 192.168.178.{args[0]}
+	}
+	handle /power/{args[0]}/on {
+		@notpost not method POST
+		respond @notpost 405
+		rewrite * /cm?cmnd=Power%20On
+		reverse_proxy 192.168.178.{args[0]}
+	}
+	handle /power/{args[0]}/off {
+		@notpost not method POST
+		respond @notpost 405
+		rewrite * /cm?cmnd=Power%20Off
+		reverse_proxy 192.168.178.{args[0]}
+	}
+}
+
 (services) {
 	redir /octoprint-mk3 /octoprint-mk3/
 	handle_path /octoprint-mk3/* {
@@ -25,6 +54,12 @@
 	handle_path /sensor-visualizer/* {
 		reverse_proxy localhost:8000
 	}
+
+	# Tasmota power plugs (see the tasmota snippet below)
+	import tasmota 146
+	import tasmota 158
+	import tasmota 141
+	import tasmota 149
 
 	handle {
 		root * /srv

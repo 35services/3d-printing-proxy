@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Drucken bei 35services</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <header>
@@ -28,12 +28,12 @@
       <p></p>
       <span class="go">Öffnen &rarr;</span>
     </a>
-    <a class="preview" href="/octoprint-mk3/" data-stream="/octoprint-mk3/webcam/?action=stream" aria-label="OctoPrint MK3 öffnen">
+    <a class="preview" href="/octoprint-mk3/" data-stream="/octoprint-mk3/webcam/?action=stream" aria-label="MK3 Webcam vergrößern">
       <img alt="MK3 Webcam">
       <span class="label">MK3 live</span>
       <span class="offline">Webcam offline</span>
     </a>
-    <a class="preview" href="/octoprint-mk4/" data-stream="/octoprint-mk4/webcam/?action=stream" aria-label="OctoPrint MK4 öffnen">
+    <a class="preview" href="/octoprint-mk4/" data-stream="/octoprint-mk4/webcam/?action=stream" aria-label="MK4 Webcam vergrößern">
       <img alt="MK4 Webcam">
       <span class="label">MK4 live</span>
       <span class="offline">Webcam offline</span>
@@ -46,7 +46,36 @@
       <p>Hier speichern wir die geladenen Filamente.</p>
       <span class="go">Öffnen &rarr;</span>
     </a>
+    <section class="card power" aria-labelledby="power-title">
+      <span class="icon">
+        <svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+      </span>
+      <h2 id="power-title">Stromverbrauch</h2>
+      <table>
+        <thead>
+          <tr><th scope="col">Gerät</th><th scope="col">Jetzt</th><th scope="col">Heute</th><th scope="col">Gestern</th><th scope="col" class="total">Gesamt</th></tr>
+        </thead>
+        <tbody>
+          <tr data-plug="/power/146" data-printer><th scope="row"><button type="button" class="plug-name">MK3</button> <span class="relay-off" hidden>(aus)</span></th><td class="now">&ndash;</td><td class="today">&ndash;</td><td class="yesterday">&ndash;</td><td class="total">&ndash;</td></tr>
+          <tr data-plug="/power/158" data-printer><th scope="row"><button type="button" class="plug-name">MK4</button> <span class="relay-off" hidden>(aus)</span></th><td class="now">&ndash;</td><td class="today">&ndash;</td><td class="yesterday">&ndash;</td><td class="total">&ndash;</td></tr>
+          <tr data-plug="/power/141" data-printer><th scope="row"><button type="button" class="plug-name">A1 mini</button> <span class="relay-off" hidden>(aus)</span></th><td class="now">&ndash;</td><td class="today">&ndash;</td><td class="yesterday">&ndash;</td><td class="total">&ndash;</td></tr>
+          <tr data-plug="/power/149"><th scope="row"><button type="button" class="plug-name">Trockner</button> <span class="relay-off" hidden>(aus)</span></th><td class="now">&ndash;</td><td class="today">&ndash;</td><td class="yesterday">&ndash;</td><td class="total">&ndash;</td></tr>
+        </tbody>
+      </table>
+    </section>
   </main>
+  <dialog class="plug-dialog" id="plug-dialog" aria-labelledby="plug-dialog-title">
+    <div class="plug-dialog-body">
+      <h2 id="plug-dialog-title"></h2>
+      <p class="plug-state" aria-live="polite"></p>
+      <p class="plug-warn"></p>
+      <div class="plug-actions">
+        <button type="button" class="plug-on" data-action="on">Einschalten</button>
+        <button type="button" class="plug-off" data-action="off">Ausschalten</button>
+        <button type="button" class="plug-close">Schließen</button>
+      </div>
+    </div>
+  </dialog>
   <aside class="note">
     <strong>OctoApp?</strong> Den Proxy verwenden: Für den MK3S direkt  als Basis-URL eintragen (<code>http://&lt;diese-adresse&gt;/octoprint-mk3</code>), für den MK4 <code>http://&lt;diese-adresse&gt;/octoprint-mk4</code>. Der Server läuft unter <code>:91</code> das scheint aber alles direkt über die proxy URL zu funktionieren.
   </aside>
@@ -78,6 +107,100 @@
       previews.forEach(document.hidden ? stop : start);
     });
     previews.forEach(start);
+
+    // Tap a webcam to enlarge it, tap again (anywhere) or Esc to shrink.
+    previews.forEach(function (box) {
+      box.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (box.classList.contains('failed') && !box.classList.contains('big')) return;
+        box.classList.toggle('big');
+      });
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') previews.forEach(function (box) { box.classList.remove('big'); });
+    });
+
+    // Power plugs: poll the read-only Caddy endpoints while the tab is visible.
+    var plugs = Array.prototype.slice.call(document.querySelectorAll('.power tr[data-plug]'));
+    function kwh(v) { return v.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' kWh'; }
+    function set(row, cls, text) { row.querySelector('.' + cls).textContent = text; }
+    function poll(row) {
+      fetch(row.dataset.plug, { cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw r; return r.json(); })
+        .then(function (d) {
+          var e = d.StatusSNS.ENERGY;
+          row.classList.remove('failed');
+          set(row, 'now', e.Power + ' W');
+          set(row, 'today', kwh(e.Today));
+          set(row, 'yesterday', kwh(e.Yesterday));
+          set(row, 'total', kwh(e.Total));
+          row.querySelector('.total').title = 'seit ' + e.TotalStartTime.slice(0, 10);
+        })
+        .catch(function () {
+          row.classList.add('failed');
+          set(row, 'now', 'offline');
+        });
+      fetch(row.dataset.plug + '/state', { cache: 'no-store' })
+        .then(function (r) { if (!r.ok) throw r; return r.json(); })
+        .then(function (d) { showOffTag(row, relayState(d)); })
+        .catch(function () { showOffTag(row, null); });
+    }
+    // Some plugs answer POWER1 instead of POWER (SetOption26).
+    function relayState(d) { return d.POWER || d.POWER1; }
+    function showOffTag(row, state) { row.querySelector('.relay-off').hidden = state !== 'OFF'; }
+    var timer;
+    function pollAll() { plugs.forEach(poll); }
+    document.addEventListener('visibilitychange', function () {
+      clearInterval(timer);
+      if (!document.hidden) { pollAll(); timer = setInterval(pollAll, 10000); }
+    });
+    pollAll();
+    timer = setInterval(pollAll, 10000);
+
+    // Tap a plug row: dialog to switch the device on/off (POST /power/<n>/on|off).
+    var dialog = document.getElementById('plug-dialog');
+    var onBtn = dialog.querySelector('.plug-on');
+    var offBtn = dialog.querySelector('.plug-off');
+    var current;
+    function showRelay(state) {
+      var text = { ON: 'Steckdose ist an', OFF: 'Steckdose ist aus' }[state];
+      dialog.querySelector('.plug-state').textContent = text
+        ? text + (state === 'ON' ? ' (' + current.querySelector('.now').textContent + ')' : '')
+        : 'Steckdose nicht erreichbar';
+      showOffTag(current, state);
+      onBtn.disabled = state !== 'OFF';
+      offBtn.disabled = state !== 'ON';
+    }
+    function relayRequest(url, options) {
+      onBtn.disabled = offBtn.disabled = true;
+      return fetch(url, options)
+        .then(function (r) { if (!r.ok) throw r; return r.json(); })
+        .then(function (d) { showRelay(relayState(d)); })
+        .catch(function () { showRelay(null); });
+    }
+    function openPlug(row) {
+      current = row;
+      dialog.querySelector('h2').textContent = row.querySelector('.plug-name').textContent;
+      dialog.querySelector('.plug-state').textContent = 'Status wird geladen …';
+      dialog.querySelector('.plug-warn').textContent = row.hasAttribute('data-printer')
+        ? 'Ausschalten trennt den Drucker sofort vom Strom, ein laufender Druck wird abgebrochen.'
+        : 'Ausschalten trennt das Gerät sofort vom Strom.';
+      dialog.showModal();
+      relayRequest(row.dataset.plug + '/state', { cache: 'no-store' });
+    }
+    plugs.forEach(function (row) {
+      row.addEventListener('click', function () { openPlug(row); });
+    });
+    [onBtn, offBtn].forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var row = current;
+        relayRequest(row.dataset.plug + '/' + btn.dataset.action, { method: 'POST' })
+          .then(function () { setTimeout(function () { poll(row); }, 1500); });
+      });
+    });
+    dialog.querySelector('.plug-close').addEventListener('click', function () { dialog.close(); });
+    // A tap on the backdrop (outside the dialog box) closes it too.
+    dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
   </script>
 </body>
 </html>

@@ -8,7 +8,7 @@ We have a raspberry pi and run a bunch of services
 
 | Where | What |
 |---|---|
-| `:80` (HTTP, LAN) | landing page, `/octoprint-mk3/` (-> `:91`), `/octoprint-mk4/` (-> `:92`), `/filaments/` (-> `:81`), `/sensor-visualizer/` (-> `127.0.0.1:8000`, `visualizer.html`). Requests for the Tailscale name are redirected to HTTPS |
+| `:80` (HTTP, LAN) | landing page, `/octoprint-mk3/` (-> `:91`), `/octoprint-mk4/` (-> `:92`), `/filaments/` (-> `:81`), `/sensor-visualizer/` (-> `127.0.0.1:8000`, `visualizer.html`), `/power/146` (MK3), `/power/158` (MK4), `/power/141` (A1 mini), `/power/149` (Trockner) (Tasmota plugs, shown on the landing page: `GET /power/<n>` energy status, `GET /power/<n>/state` relay state, `POST /power/<n>/on` and `/off` switch the plug; every route is rewritten to that one fixed Tasmota command, see the `tasmota` snippet in the `Caddyfile`). Requests for the Tailscale name are redirected to HTTPS |
 | `https://<TS_DOMAIN>/` | same routes as above, over HTTPS |
 | `https://<TS_DOMAIN>/vaultwarden/` | Vaultwarden password manager (-> `127.0.0.1:8080`, HTTPS only, see the `bitwarden` project) |
 
