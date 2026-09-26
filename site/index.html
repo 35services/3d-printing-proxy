@@ -109,15 +109,40 @@
     previews.forEach(start);
 
     // Tap a webcam to enlarge it, tap again (anywhere) or Esc to shrink.
+    // While enlarged, hold a Wake Lock so the screen doesn't sleep (Wake Lock
+    // API: needs HTTPS, so this does nothing on the plain-HTTP LAN address;
+    // Firefox doesn't support it at all - syncWakeLock() then just no-ops).
+    var wakeLock = null;
+    function anyEnlarged() { return previews.some(function (box) { return box.classList.contains('big'); }); }
+    function syncWakeLock() {
+      if (!('wakeLock' in navigator)) return;
+      if (anyEnlarged() && !wakeLock) {
+        navigator.wakeLock.request('screen').then(function (lock) {
+          wakeLock = lock;
+          wakeLock.addEventListener('release', function () { wakeLock = null; });
+        }).catch(function () { /* e.g. page hidden right at request time; ignore */ });
+      } else if (!anyEnlarged() && wakeLock) {
+        wakeLock.release();
+      }
+    }
     previews.forEach(function (box) {
       box.addEventListener('click', function (e) {
         e.preventDefault();
         if (box.classList.contains('failed') && !box.classList.contains('big')) return;
         box.classList.toggle('big');
+        syncWakeLock();
       });
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') previews.forEach(function (box) { box.classList.remove('big'); });
+      if (e.key === 'Escape') {
+        previews.forEach(function (box) { box.classList.remove('big'); });
+        syncWakeLock();
+      }
+    });
+    // The OS releases the lock whenever the tab is hidden (phone screen
+    // locked, app switched away); re-acquire it once it's visible again.
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) syncWakeLock();
     });
 
     // Power plugs: poll the read-only Caddy endpoints while the tab is visible.
