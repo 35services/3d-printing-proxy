@@ -1,6 +1,6 @@
 # Drucken bei 35services
 
-We have a raspberry pi and run a bunch of services
+We have a raspberry pi and run a bunch of services. See [CHANGELOG.md](CHANGELOG.md) for what changed and when.
 
 ![Landing page: Drucken bei 35services](docs/screenshot.png)
 
@@ -11,6 +11,11 @@ We have a raspberry pi and run a bunch of services
 | `:80` (HTTP, LAN) | landing page, `/octoprint-mk3/` (-> `:91`), `/octoprint-mk4/` (-> `:92`), `/filaments/` (-> `:81`), `/sensor-visualizer/` (-> `127.0.0.1:8000`, `visualizer.html`), `/power/146` (MK3), `/power/158` (MK4), `/power/141` (A1 mini), `/power/149` (Trockner) (Tasmota plugs, shown on the landing page: `GET /power/<n>` energy status, `GET /power/<n>/state` relay state, `POST /power/<n>/on` and `/off` switch the plug; every route is rewritten to that one fixed Tasmota command, see the `tasmota` snippet in the `Caddyfile`). Requests for the Tailscale name are redirected to HTTPS |
 | `https://<TS_DOMAIN>/` | same routes as above, over HTTPS |
 | `https://<TS_DOMAIN>/vaultwarden/` | Vaultwarden password manager (-> `127.0.0.1:8080`, HTTPS only, see the `bitwarden` project) |
+
+## Landing page
+
+- Tap a webcam preview to enlarge it (tap again, or Esc, to shrink). While enlarged, the page holds a [Wake Lock](https://developer.mozilla.org/en-US/docs/Web/API/Screen_Wake_Lock_API) so the screen doesn't sleep - only over HTTPS (a secure context is required), and not on Firefox (no support yet); both cases just fall back to normal screen-timeout behavior.
+- The "Stromverbrauch" card polls the Tasmota plugs every 10s; tap a row to open a dialog and switch that plug on/off.
 
 ## HTTPS via Tailscale
 
