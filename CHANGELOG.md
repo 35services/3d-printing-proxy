@@ -8,6 +8,15 @@ versioned releases, so entries are grouped by date (when the change was
 merged to `main`, which is also when it reaches the Pi) instead of a version
 number.
 
+## 2026-11-24
+
+### Added
+
+- `INVENTORY.md`: what runs on the Pi, and the Teedy prototype (why the
+  fmaass fork, setup, state, what's left before it stops being an
+  experiment).
+- "Experiment" badge and a short warning on the Teedy landing-page card.
+
 ## 2026-11-22
 
 ### Added
