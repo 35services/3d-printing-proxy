@@ -87,5 +87,12 @@
 		reverse_proxy localhost:8080
 	}
 
+	# Teedy document management (../teedy), HTTPS only. Its prod build uses
+	# relative URLs (api/..., #/ routes), so the prefix can be stripped.
+	redir /teedy /teedy/
+	handle_path /teedy/* {
+		reverse_proxy localhost:8090
+	}
+
 	import services
 }

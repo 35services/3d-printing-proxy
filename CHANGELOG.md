@@ -8,6 +8,22 @@ versioned releases, so entries are grouped by date (when the change was
 merged to `main`, which is also when it reaches the Pi) instead of a version
 number.
 
+## 2026-11-22
+
+### Added
+
+- Teedy document management at `/teedy/` (-> `127.0.0.1:8090`), HTTPS only
+  (see the `teedy` project), with a landing-page card pointing at the
+  absolute Tailscale HTTPS URL.
+
+## 2026-09-30
+
+### Added
+
+- Landing-page card linking to Vaultwarden. It points at the absolute
+  Tailscale HTTPS URL, since Vaultwarden is not served on the plain-HTTP LAN
+  address.
+
 ## 2026-09-26
 
 ### Added

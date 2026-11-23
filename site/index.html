@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Drucken bei 35services</title>
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <header>
@@ -85,6 +85,7 @@
       <li><a href="https://github.com/35services/3d-printing-proxy">3d-printing-proxy</a> &ndash; diese Seite und der Caddy-Proxy</li>
       <li><a href="https://github.com/35services/3d-printing-octoprint">3d-printing-octoprint</a> &ndash; OctoPrint-Setup</li>
       <li><a href="https://github.com/35services/3d-printing-simple-filament-tool">3d-printing-simple-filament-tool</a> &ndash; Filamentverwaltung</li>
+      <li><a href="https://github.com/35services/bitwarden">bitwarden</a> &ndash; Vaultwarden-Passwortmanager</li>
     </ul>
   </aside>
   <aside class="note">
@@ -92,6 +93,22 @@
       <li><a href="/sensor-visualizer/visualizer.html">The Sensor Visualizer</a></li>
     </ul>
   </aside>
+  <a class="card wide" href="https://octo35services.tail19e18b.ts.net/vaultwarden/">
+    <span class="icon">
+      <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v2"/></svg>
+    </span>
+    <h2>Vaultwarden &ndash; Passwordmanager für 3D-Druck</h2>
+    <p>Hier gibt es alle 3D-Druck relevanten Zugänge. Registriert euch und meldet euch bei Falko, damit er euch in die Sammlung der geteilten Passwörter hinzufügen kann. Der Dienst läuft auch auf dem Raspberry Pi in der Werkstatt.</p>
+    <span class="go">Öffnen &rarr;</span>
+  </a>
+  <a class="card wide" href="https://octo35services.tail19e18b.ts.net/teedy/">
+    <span class="icon">
+      <svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>
+    </span>
+    <h2>Teedy &ndash; Dokumente</h2>
+    <p>Dokumentenverwaltung mit Volltextsuche und OCR, z.&nbsp;B. für Anleitungen, Datenblätter und Rechnungen. Nur über Tailscale (HTTPS) erreichbar.</p>
+    <span class="go">Öffnen &rarr;</span>
+  </a>
   <script>
     // Only hold the MJPEG streams open while the tab is visible.
     var previews = Array.prototype.slice.call(document.querySelectorAll('.preview'));
