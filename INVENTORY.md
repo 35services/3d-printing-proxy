@@ -29,6 +29,14 @@ document yet, and it may be removed again.
 
 ### Why the fmaass fork
 
+How the fork describes itself ([README](https://github.com/fmaass/teedy-docs#readme)):
+
+> This is an actively maintained fork of sismics/docs (Teedy). It includes
+> OIDC/SSO authentication, Java 21 + Jetty 12 modernization, security
+> hardening, and multi-arch Docker images published to GHCR.
+
+(The image deployed here, v3.8.10, actually runs Java 25: `openjdk 25.0.4`.)
+
 Upstream [sismics/docs](https://github.com/sismics/docs) does not publish
 arm64 images, so the Pi runs the fork
 [fmaass/teedy-docs](https://github.com/fmaass/teedy-docs) instead. It ships
