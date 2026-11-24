@@ -36,6 +36,29 @@ multi-arch images (amd64 + arm64) and adds OIDC, Java 25 and Jetty 12. Its
 version numbers (3.8.x) are its own and don't match upstream's (1.12 as of
 2026-11-23).
 
+### Deployed version
+
+There are several Teedy lines around, so name the fork, not just the number:
+
+| | Repo | Versions | Deployed here |
+|---|---|---|---|
+| Upstream | [sismics/docs](https://github.com/sismics/docs) | 1.x (1.12 on 2026-11-23) | no, no arm64 images |
+| Fork | [fmaass/teedy-docs](https://github.com/fmaass/teedy-docs) | 3.x | **yes** |
+
+Deployed now: **fmaass/teedy-docs `v3.8.10`**, commit `95d4187`, image
+`ghcr.io/fmaass/teedy-docs:v3.8.10`.
+
+The landing-page card shows the same line. Over HTTPS it reads the version
+and commit from the running instance (`/teedy/api/app`, fields
+`current_version` and `commit_id`); on the plain-HTTP LAN address it shows the
+version written into `site/index.html`. To check by hand:
+
+    curl -s https://<TS_DOMAIN>/teedy/api/app        # current_version, commit_id
+    docker inspect teedy --format '{{.Config.Image}}' # on the Pi
+
+`commit_id` is a commit in the fork, so it tells the builds apart even if
+another fork uses the same version number.
+
 ### Setup
 
 - Compose project `~/Documents/teedy` (not in git): `teedy` (the app) and
@@ -78,6 +101,8 @@ version numbers (3.8.x) are its own and don't match upstream's (1.12 as of
 
 Read the fork's changelog, set `TEEDY_VERSION` in `.env` to the new tag, then
 `docker compose pull && docker compose up -d` in `~/Documents/teedy`.
+Then update the version in [Deployed version](#deployed-version) and the
+hard-coded fallback on the Teedy card in `site/index.html`.
 
 ### Removing it
 

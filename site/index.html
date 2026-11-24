@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Drucken bei 35services</title>
-<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
   <header>
@@ -86,6 +86,7 @@
       <li><a href="https://github.com/35services/3d-printing-octoprint">3d-printing-octoprint</a> &ndash; OctoPrint-Setup</li>
       <li><a href="https://github.com/35services/3d-printing-simple-filament-tool">3d-printing-simple-filament-tool</a> &ndash; Filamentverwaltung</li>
       <li><a href="https://github.com/35services/bitwarden">bitwarden</a> &ndash; Vaultwarden-Passwortmanager</li>
+      <li><a href="https://github.com/fmaass/teedy-docs">fmaass/teedy-docs</a> &ndash; der Teedy-Fork, der hier läuft (nicht sismics/docs)</li>
     </ul>
   </aside>
   <aside class="note">
@@ -107,6 +108,9 @@
     </span>
     <h2>Teedy &ndash; Dokumente <span class="badge">Experiment</span></h2>
     <p>Testbetrieb: Dokumente nicht nur hier ablegen, der Dienst kann wieder verschwinden. Dokumentenverwaltung mit Volltextsuche und OCR, z.&nbsp;B. für Anleitungen, Datenblätter und Rechnungen. Nur über Tailscale (HTTPS) erreichbar.</p>
+    <!-- Deployed Teedy build. Keep in sync with TEEDY_VERSION in ~/Documents/teedy/.env;
+         over HTTPS the script below replaces it with what the running instance reports. -->
+    <p class="version">Version: fmaass/teedy-docs <span id="teedy-version">v3.8.10 (95d4187)</span></p>
     <span class="go">Öffnen &rarr;</span>
   </a>
   <script>
@@ -243,6 +247,18 @@
     dialog.querySelector('.plug-close').addEventListener('click', function () { dialog.close(); });
     // A tap on the backdrop (outside the dialog box) closes it too.
     dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
+
+    // Teedy only answers over HTTPS (same origin as this page there) and sends no CORS
+    // headers, so on the plain-HTTP LAN address the hard-coded version stays.
+    if (location.protocol === 'https:') {
+      fetch('/teedy/api/app', { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function (app) {
+          document.getElementById('teedy-version').textContent =
+            'v' + app.current_version + (app.commit_id ? ' (' + app.commit_id.slice(0, 7) + ')' : '');
+        })
+        .catch(function () {});
+    }
   </script>
 </body>
 </html>

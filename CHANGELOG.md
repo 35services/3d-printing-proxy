@@ -12,6 +12,10 @@ number.
 
 ### Added
 
+- The Teedy card shows the deployed build (fmaass/teedy-docs, version and
+  commit; read live from `/teedy/api/app` over HTTPS), the fork is listed
+  under "Quellcode", and `INVENTORY.md` has a "Deployed version" section
+  that tells the upstream and fork version lines apart.
 - `INVENTORY.md`: what runs on the Pi, and the Teedy prototype (why the
   fmaass fork, setup, state, what's left before it stops being an
   experiment).

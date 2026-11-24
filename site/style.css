@@ -88,6 +88,7 @@ header p { margin: 0; color: var(--muted); }
   font-weight: 600;
   vertical-align: middle;
 }
+.card .version { font-size: .8rem; font-variant-numeric: tabular-nums; }
 .go { margin-top: auto; color: var(--accent); font-weight: 600; font-size: .95rem; }
 .note {
   width: 100%;
