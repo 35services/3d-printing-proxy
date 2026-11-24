@@ -57,10 +57,17 @@ version numbers (3.8.x) are its own and don't match upstream's (1.12 as of
 
 - [ ] Nightly backup of the database and `data/teedy` together
       (`pg_dump` + `tar`, see the README in the `teedy` project).
-- [ ] Check that the fork has upstream's recent security fixes
-      (sismics/docs #798 stored XSS via HTML uploads, #799 LDAP injection,
-      #806 file rename/delete permissions, #810 XML content types, CSP,
-      HttpOnly cookie).
+- [x] Check that the fork has upstream's recent security fixes (checked
+      2026-11-24 against the v3.8.10 source):
+  - sismics/docs #798 and #810 (stored XSS via HTML, SVG or XML uploads):
+    covered, more strictly. Every uploaded original is served as an
+    attachment with `Content-Security-Policy: sandbox; default-src 'none'`
+    and `nosniff`, whatever its MIME type.
+  - #799 (LDAP injection): covered, the username is escaped per RFC 4515.
+  - #806 (rename/delete a file with read access only): covered, both need
+    write permission.
+  - #810 (HttpOnly session cookie): covered, `auth_token` is HttpOnly and
+    SameSite=Lax, with a separate CSRF token.
 - [ ] Set the default language to German in the admin settings: the app
       reports `eng` although `.env` sets `DOCS_DEFAULT_LANGUAGE=deu`.
 - [ ] Remove `~/teedy-admin-password.txt` from the Pi once the admin password
